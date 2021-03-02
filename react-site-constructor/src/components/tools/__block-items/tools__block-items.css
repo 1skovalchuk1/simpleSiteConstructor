@@ -1,0 +1,98 @@
+.label-wrapper {
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 5px;
+}
+
+/**********************************************************************************************/
+
+.input[type=text]{
+    margin-left: 5px;
+    font-size: 14px;
+    border-radius: 5px;
+    color: var(--DarktextColor);
+    border: 1px var(--border) solid;
+}
+
+.input:focus[type=text] {
+    outline: none;
+    box-shadow: 0 0 3px var(--BackgroundBlue);
+}
+
+input[type='radio']:after {
+    width: 15px;
+    height: 15px;
+    border-radius: 15px;
+    top: -2px;
+    left: -1px;
+    position: relative;
+    background-color: #d1d3d1;
+    content: '';
+    display: inline-block;
+    visibility: visible;
+}
+
+input[type='radio']:checked:after {
+    width: 15px;
+    height: 15px;
+    border-radius: 15px;
+    top: -2px;
+    left: -1px;
+    position: relative;
+    background-color: var(--BackgroundBlue);
+    content: '';
+    display: inline-block;
+    visibility: visible;
+}
+/**********************************************************************************************/
+
+.label-text {
+    padding-bottom: 5px;
+    font-size: var(--font-size);
+}
+
+.label-radio {
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 5px;
+    cursor: pointer;
+}
+
+/**********************************************************************************************/
+
+.button {
+    height: 30px;
+    border-radius: 5px;
+    font-size: var(--font-size);
+    background: var(--BackgroundBlue);
+    color: var(--lightTextColor);
+    border: none;
+    cursor: pointer;
+}
+
+.button:focus {
+    box-shadow: 0 0 3px var(--BackgroundBlue);
+    outline: none;
+}
+
+.button:active {
+    border-radius: 5px;
+    border: 1px var(--border) solid;
+    box-shadow: none;
+    background-color: var(--BackgroundLightGrey);
+    color: var(--DarktextColor);
+}
+
+/**********************************************************************************************/
+
+.check-icon-true {
+    font-size: 15px;
+    padding-left: 12px;
+    color: var(--BackgroundBlue);
+}
+
+.check-icon-false {
+    font-size: 15px;
+    padding-left: 12px;
+    color: var(--border);
+}

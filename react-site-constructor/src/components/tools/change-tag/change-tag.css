@@ -1,0 +1,7 @@
+.tools__change-tag {
+    display: none;
+}
+
+.active {
+    display: block;
+}

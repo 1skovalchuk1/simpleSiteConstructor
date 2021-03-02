@@ -1,0 +1,11 @@
+.tab__button {
+    padding: 15px 30px;
+    font-size: var(--font-size);
+    color: var(--lightTextColor);
+    cursor: pointer;
+}
+
+.tab__button--active {
+    background-color: var(--BackgroundLightGrey);
+    color: var(--DarktextColor);
+}

@@ -1,0 +1,12 @@
+.tools__block {
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch;
+    flex-direction: column;
+    padding: 0 15px;
+    border-right: 1px var(--border) solid;
+}
+
+.tools__block--last {
+    border: none;
+}

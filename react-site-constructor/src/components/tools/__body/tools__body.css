@@ -1,0 +1,8 @@
+.tools__body {
+    display: flex;
+    justify-content: flex-start;
+    padding: 15px 15px 0 15px;
+    border-bottom: 1px solid var(--border);
+    color: var(--DarktextColor);
+    background-color: var(--BackgroundLightGrey);
+}
