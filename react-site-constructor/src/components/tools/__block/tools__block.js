@@ -9,6 +9,6 @@ const ToolsBlock = (props) => {
 
 ToolsBlock.defaultProps = {
     classBlock: ''
-  };
+}
 
 export {ToolsBlock}

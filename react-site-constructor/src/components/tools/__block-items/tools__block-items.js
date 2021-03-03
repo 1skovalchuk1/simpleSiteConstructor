@@ -27,13 +27,17 @@ const LabelRadioInput = (props) => {
 
 const LabelCheckboxInput = (props) => {
     return (
-        <label className="label-radio">
+        <label className={`label-radio ${props.classLabel}`}>
             {props.children}
             <input className="input"
                    type="checkbox"
                 {...props.attributes}/>
         </label>
     )
+}
+
+LabelCheckboxInput.defaultProps = {
+    classLabel: ''
 }
 
 const Button = (props) => {
@@ -50,4 +54,19 @@ const CheckIcon = (props) => {
     }
 }
 
-export {LabelInput, Button, CheckIcon, LabelRadioInput, LabelCheckboxInput}
+const LabelRadioInputs = (props) => {
+    const newList =  props.listPath.map((item) => {
+        if (item === props.radioInputRef){
+            return <LabelRadioInput key={item} 
+                                    attributes={{name: props.name, 
+                                                 value:item, 
+                                                 defaultChecked:true}}>{item}</LabelRadioInput>
+        }
+        return <LabelRadioInput key={item} 
+                                attributes={{name: props.name, 
+                                             value:item}}>{item}</LabelRadioInput>
+    })
+    return <>{newList}</>
+}
+
+export {LabelInput, Button, CheckIcon, LabelRadioInput, LabelCheckboxInput, LabelRadioInputs}

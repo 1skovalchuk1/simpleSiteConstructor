@@ -16,4 +16,7 @@ const TAGS = ['a', 'abbr', 'address', 'area', 'article', 'aside', 'audio', 'b', 
 const EMPTY_TAGS = ['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'menuitem', 'meta', 
                     'param', 'source', 'track', 'wbr',]
 
-export {CONSTRUCTOR, TAGS, EMPTY_TAGS, WORKSPACE}
+const PATH_LIST = ['append', 'prepend', 'before', 'after', 'replaceWith',]
+const ACTIONS_LIST = ['copy', 'remove', 'cut',]
+
+export {CONSTRUCTOR, TAGS, EMPTY_TAGS, WORKSPACE, PATH_LIST, ACTIONS_LIST}

@@ -5,3 +5,7 @@
 .active {
     display: block;
 }
+
+.checkbox-with-children {
+    margin-top: 20px;
+}

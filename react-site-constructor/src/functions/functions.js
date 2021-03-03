@@ -19,7 +19,30 @@ const _joinTag = (selectElementRef, radioInputRef, newElement) => {
     }
 }
 
-const _clear = (e, CONSTRUCTOR, workSpaceBody, selectElementRef, EmptyTag, addFocus, removeFocus, selectElement, joinTag, clear) => {
+const _changeTagActions = (e, actionRadioInputRef, withChildren, selectElementRef, pathRadioInputRef) => {
+    if(selectElementRef.current){
+        const pathElem = e.target
+        switch(actionRadioInputRef.current){
+            case 'copy':
+                if (withChildren){
+                    const cloneElem = selectElementRef.current.cloneNode(true)
+                    pathElem[pathRadioInputRef.current](cloneElem)
+                }else {
+                    const cloneElem = selectElementRef.current.cloneNode(false)
+                    pathElem[pathRadioInputRef.current](cloneElem)
+                }
+                break;
+            case 'remove':
+                break;
+            case 'cut':
+                break;
+            default:
+                console.log('oops')
+        }
+    }
+}
+
+const _clearAddTag = (e, CONSTRUCTOR, workSpaceBody, selectElementRef, EmptyTag, addFocus, removeFocus, selectElement, joinTag, clear) => {
     e.preventDefault()
     console.log('clear')
     workSpaceBody.removeEventListener('mouseover', addFocus)
@@ -38,4 +61,4 @@ const _clear = (e, CONSTRUCTOR, workSpaceBody, selectElementRef, EmptyTag, addFo
 }
 
 
-export {_focus, _selectElement, _joinTag, _clear}
+export {_focus, _selectElement, _joinTag, _clearAddTag, _changeTagActions}

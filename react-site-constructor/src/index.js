@@ -13,10 +13,10 @@ WORKSPACE.onload = () => {
   )
 }
 
-ReactDOM.render(
-  <>
-    <Tab/>
-    <Tools/>
-  </>,
-  document.getElementById('CONSTRUCTOR')
-)
+  ReactDOM.render(
+    <>
+      <Tab/>
+      <Tools/>
+    </>,
+    document.getElementById('CONSTRUCTOR')
+  )

@@ -2,14 +2,14 @@ import React, {useState, useRef, useEffect} from 'react'
 import {ToolsBody} from '../__body/tools__body'
 import {ToolsBlock} from '../__block/tools__block'
 import {PreviewTag} from '../__preview-tag/tools__preview-tag'
-import {LabelInput, LabelRadioInput, LabelCheckboxInput, Button, CheckIcon} from '../__block-items/tools__block-items';
-import {CONSTRUCTOR, TAGS, EMPTY_TAGS} from '../../../constants/constants'
-import {_focus, _selectElement, _joinTag, _clear} from '../../../functions/functions'
+import {LabelInput, LabelCheckboxInput, 
+        Button, CheckIcon, LabelRadioInputs} from '../__block-items/tools__block-items';
+import {CONSTRUCTOR, TAGS, EMPTY_TAGS, PATH_LIST} from '../../../constants/constants'
+import {_focus, _selectElement, _joinTag, _clearAddTag} from '../../../functions/functions'
 
 import './add-tag.css';
 
-const actions = (workSpaceBody, setAttributesDict, setAttributeName, setAttributeValue, selectElementRef,
-                 radioInputRef, newElementRef, EmptyTag) => {
+const actions = (workSpaceBody, selectElementRef, radioInputRef, newElementRef, EmptyTag) => {
 
     const newElement = newElementRef.current
     
@@ -17,10 +17,10 @@ const actions = (workSpaceBody, setAttributesDict, setAttributeName, setAttribut
     const removeFocus = (e) => _focus(e, workSpaceBody, 'remove')
     const selectElement = (e) => _selectElement(e, workSpaceBody, selectElementRef)
     const joinTag = () => _joinTag(selectElementRef, radioInputRef, newElement)
-    const clear = (e) => _clear(e, CONSTRUCTOR, workSpaceBody, selectElementRef, EmptyTag, addFocus, removeFocus, 
+    const clear = (e) => _clearAddTag(e, CONSTRUCTOR, workSpaceBody, selectElementRef, EmptyTag, addFocus, removeFocus, 
                                 selectElement, joinTag, clear)
     
-    if (workSpaceBody.children.length){
+    if (workSpaceBody && workSpaceBody.children.length){
         // TODO make function
         CONSTRUCTOR.querySelectorAll('.tools__block')
                    .forEach((item) => {item.classList.add('hide-block')})
@@ -31,13 +31,11 @@ const actions = (workSpaceBody, setAttributesDict, setAttributeName, setAttribut
         workSpaceBody.addEventListener('click', joinTag)
         workSpaceBody.addEventListener('contextmenu', clear)
     }else {
-        workSpaceBody.append(newElement.cloneNode(true))
-        // TODO make function
-        CONSTRUCTOR.querySelector('.tools__block:nth-child(1)').classList.remove('hide-block')
-        //
-        setAttributesDict({})
-        setAttributeName('')
-        setAttributeValue('')
+        if (newElement) {
+            workSpaceBody.append(newElement.cloneNode(true))
+            // TODO make function
+            CONSTRUCTOR.querySelector('.tools__block:nth-child(1)').classList.remove('hide-block')
+        }
     }
 }
 
@@ -45,15 +43,14 @@ const AddTag = () => {
 
     const workSpaceBody = document.getElementById('WORKSPACE').contentDocument.body
 
-    const newElementRef = useRef()
-
     const [tagName, setTagName] = useState('')
     const [tagBody, setTagBody] = useState('')
     const [attributesObj, setAttributesObj] = useState({})
     const [attributeName, setAttributeName] = useState('')
     const [attributeValue, setAttributeValue] = useState('')
     const [showEmptyTag, setShowEmptyTag] = useState(true)
-
+    
+    const newElementRef = useRef()
     const radioInputRef = useRef('append')
     const selectElementRef = useRef()
 
@@ -117,22 +114,6 @@ const AddTag = () => {
                     previewTag.classList.remove('show-empty-tag')}
     }
 
-    const LabelRadioInputs = () => {
-        const listActions = ['append', 'prepend', 'before', 'after', 'replaceWith']
-        const newList =  listActions.map((item) => {
-            if (item === radioInputRef.current){
-                return <LabelRadioInput key={item} 
-                                        attributes={{name:"add-tag", 
-                                                     value:item, 
-                                                     defaultChecked:true}}>{item}</LabelRadioInput>
-            }
-            return <LabelRadioInput key={item} 
-                                    attributes={{name:"add-tag", 
-                                                 value:item}}>{item}</LabelRadioInput>
-        })
-        return <>{newList}</>
-    }
-
     const clearForm = () => {
         setTagName('')
         setTagBody('')
@@ -142,15 +123,33 @@ const AddTag = () => {
         radioInputRef.current = 'append'
     }
 
+    const save = () => {
+        fetch('http://localhost:3001', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'text/plain;charset=UTF-8'
+            },
+            body: document.getElementById('WORKSPACE').contentDocument.children[0].outerHTML
+        });
+    }
+
     useEffect(() => {newElementRef.current = CONSTRUCTOR.querySelector('.tools__preview-tag').lastChild
-    EmptyTag()})
+                     EmptyTag()})
+
+    useEffect(() => {
+        if (workSpaceBody && workSpaceBody.children.length){
+            CONSTRUCTOR.querySelector('.tools__block:nth-child(1)').classList.remove('hide-block')
+        }
+    })
 
     return (
         <div className="tools__add-tag add-tag">
             <ToolsBody>
                 <ToolsBlock classBlock='hide-block'
                             attributes={{onChange:(e) => {radioInputRef.current = e.target.value}}}>
-                    <LabelRadioInputs/>
+                    <LabelRadioInputs listPath={PATH_LIST} 
+                                      radioInputRef={radioInputRef.current}
+                                      name="add-tag"/>
                 </ToolsBlock>
                 <ToolsBlock>
                     <LabelInput attributes={{type:"text",
@@ -164,17 +163,15 @@ const AddTag = () => {
                     </LabelInput>
                         <div className="label-wrapper">
                             <Button attributes={{onClick: () => actions(workSpaceBody,
-                                                                        setAttributesObj,
-                                                                        setAttributeName,
-                                                                        setAttributeValue,
                                                                         selectElementRef, 
                                                                         radioInputRef, 
                                                                         newElementRef,
                                                                         EmptyTag)}}>
-                                Add tag</Button>
-
-                                <Button attributes={{onClick: () => clearForm()}}>
-                                Clear form</Button>
+                                Add tag
+                            </Button>
+                            <Button attributes={{onClick: () => clearForm()}}>
+                                Clear form
+                            </Button>
                         </div>
                 </ToolsBlock>
                 <ToolsBlock>
@@ -199,7 +196,7 @@ const AddTag = () => {
                                                       checked: showEmptyTag}}>
                         Show Empty Tags
                     </LabelCheckboxInput>
-                    <Button attributes={{onClick:() => {removeAttribute()}}}>SAVE
+                    <Button attributes={{onClick:() => {save()}}}>SAVE
                     </Button>
                 </ToolsBlock>
             </ToolsBody>
