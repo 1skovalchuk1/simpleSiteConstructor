@@ -4,7 +4,7 @@ import {ChangeTag} from './change-tag/change-tag';
 
 import './tools.css';
 
-const Tools = () => {
+const Tools = (props) => {
 
 
     return (

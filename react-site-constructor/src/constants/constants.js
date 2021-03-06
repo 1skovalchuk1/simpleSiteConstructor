@@ -1,6 +1,4 @@
-
 const CONSTRUCTOR = document.getElementById('CONSTRUCTOR')
-const WORKSPACE = document.getElementById('WORKSPACE').contentDocument
 
 const TAGS = ['a', 'abbr', 'address', 'area', 'article', 'aside', 'audio', 'b', 'base', 'bdi', 'bdo',
               'blockquote', 'body', 'br', 'button', 'canvas', 'caption', 'cite', 'code', 'col', 'colgroup', 
@@ -19,4 +17,4 @@ const EMPTY_TAGS = ['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 
 const PATH_LIST = ['append', 'prepend', 'before', 'after', 'replaceWith',]
 const ACTIONS_LIST = ['copy', 'remove', 'cut',]
 
-export {CONSTRUCTOR, TAGS, EMPTY_TAGS, WORKSPACE, PATH_LIST, ACTIONS_LIST}
+export {CONSTRUCTOR, TAGS, EMPTY_TAGS, PATH_LIST, ACTIONS_LIST}
