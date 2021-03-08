@@ -63,7 +63,7 @@ const AddHTML = () => {
     }
 
     const save = () => {
-        fetch('http://localhost:3001', {
+        fetch('http://localhost:3001/html', {
             method: 'POST',
             headers: {
                 'Content-Type': 'text/plain;charset=UTF-8'

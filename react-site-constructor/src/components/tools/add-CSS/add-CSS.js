@@ -31,11 +31,17 @@ const AddCSS = () => {
     const getCSSobj = () => {
         if (querySelectorAll.length) {
             const CSSobj = {
-                querySelectorAll: {
+                [querySelectorAll]: {
                     [CSSproperty]: CSSvalue,
                 }
             }
-            return CSSobj
+        fetch('http://localhost:3001/css', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8'
+            },
+            body: JSON.stringify(CSSobj)
+        });
         }
     }
     const removeCSS = () => {}
