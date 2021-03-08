@@ -1,6 +1,5 @@
 import {removeEventsListener} from './common-functions';
 
-
 // **************************************focus*****************************************
 
 const _focus = (e, workSpaceBody, action) => {

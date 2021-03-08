@@ -48,9 +48,9 @@ const Button = (props) => {
 
 const CheckIcon = (props) => {
     if (props.value) {
-        return <span className="check-icon-true">&#10004;</span>
+        return <span className={`check-icon-true ${props.classCheck}`}>&#10004;</span>
     }else {
-        return <span className="check-icon-false">&#10006;</span>
+        return <span className={`check-icon-false ${props.classCheck}`}>&#10006;</span>
     }
 }
 
