@@ -25,11 +25,14 @@ const Tab = () => {
 
     return (
         <div className="tab">
-            <TabButton value="Add Tag" 
-                       attributes={{'data-bind': "add-tag",
+            <TabButton value="Add HTML" 
+                       attributes={{'data-bind': "add-HTML",
                                     onClick: (e) => {ShowBlock(e)}}}/>
-            <TabButton value="Change Tag" 
-                       attributes={{'data-bind': "change-tag",
+            <TabButton value="Edit HTML" 
+                       attributes={{'data-bind': "edit-HTML",
+                                    onClick: (e) => {ShowBlock(e)}}}/>
+            <TabButton value="Add CSS" 
+                        attributes={{'data-bind': "add-CSS",
                                     onClick: (e) => {ShowBlock(e)}}}/>
         </div>
     )

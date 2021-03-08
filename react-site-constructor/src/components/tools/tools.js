@@ -1,16 +1,17 @@
 import {React} from 'react'
-import {AddTag} from './add-tag/add-tag';
-import {ChangeTag} from './change-tag/change-tag';
+import {AddHTML} from './add-HTML/add-HTML';
+import {EditHTML} from './edit-HTML/edit-HTML';
+import {AddCSS} from './add-CSS/add-CSS';
 
 import './tools.css';
 
-const Tools = (props) => {
-
+const Tools = () => {
 
     return (
         <div className="tools">
-            <AddTag/>
-            <ChangeTag/>
+            <AddHTML/>
+            <EditHTML/>
+            <AddCSS/>
         </div>
     )
 }

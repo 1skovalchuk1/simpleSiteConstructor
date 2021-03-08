@@ -1,10 +1,15 @@
-// import { CONSTRUCTOR } from "../constants/constants"
+import {removeEventsListener} from './common-functions';
+
+
+// **************************************focus*****************************************
 
 const _focus = (e, workSpaceBody, action) => {
     if (e.target !== workSpaceBody){
         e.target.classList[action]('focus')
     }
 }
+
+// **************************************selectElement*****************************************
 
 const _selectElement = (e, workSpaceBody, selectElementRef) => {
     if (e.target !== workSpaceBody && !selectElementRef.current){
@@ -13,16 +18,18 @@ const _selectElement = (e, workSpaceBody, selectElementRef) => {
     }
 }
 
-const _joinTag = (selectElementRef, radioInputRef, newElement) => {
+// **************************************actions*****************************************
+
+const _joinTagAction = (selectElementRef, pathRadioInputRef, newElementRef) => {
     console.log(selectElementRef.current)
     if(selectElementRef.current){
         console.log('join')
         console.log(selectElementRef.current)
-        selectElementRef.current[radioInputRef.current](newElement.cloneNode(true))
+        selectElementRef.current[pathRadioInputRef.current](newElementRef.current.cloneNode(true))
     }
 }
 
-const _moveTagActions = (e, actionRadioInputRef, withChildren, selectElementRef, 
+const _moveTagAction = (e, actionRadioInputRef, withChildren, selectElementRef, 
                            pathRadioInputRef, emptyTag) => {
     if(selectElementRef.current){
         const pathElem = e.target
@@ -70,7 +77,7 @@ const _moveTagActions = (e, actionRadioInputRef, withChildren, selectElementRef,
     }
 }
 
-const _editTagActions = (oldTagNameRef, selectElementRef, setAttributesObj, setEditTagName, tagBodyRef) => {
+const _editTagAction = (oldTagNameRef, selectElementRef, setAttributesObj, setEditTagName, tagBodyRef) => {
     if(selectElementRef.current){
         oldTagNameRef.current = selectElementRef.current.tagName.toLowerCase()
         const newAttrList = Object.values(selectElementRef.current.attributes).map((value) => {
@@ -84,7 +91,7 @@ const _editTagActions = (oldTagNameRef, selectElementRef, setAttributesObj, setE
     }
 }
 
-const _editTextNode = (e, selectElementRef, workSpaceBody) => {
+const _editTextNodeAction = (e, selectElementRef, workSpaceBody) => {
     if (e.target !== workSpaceBody && !selectElementRef.current){
         console.log('select')
         selectElementRef.current = e.target
@@ -92,7 +99,9 @@ const _editTextNode = (e, selectElementRef, workSpaceBody) => {
     selectElementRef.current.setAttribute('contenteditable', 'true')
 }
 
-const _clearTextNode = (e, workSpaceBody, addFocus, removeFocus, editTextNode,
+// **************************************clear*****************************************
+
+const _clearTextNode = (e, workSpaceBody, addFocus, removeFocus, textNodeAction,
                         clear, selectElementRef, emptyTag) => {
     e.preventDefault()
     console.log('clear')
@@ -100,7 +109,7 @@ const _clearTextNode = (e, workSpaceBody, addFocus, removeFocus, editTextNode,
     selectElementRef.current.removeAttribute('contenteditable')
     workSpaceBody.removeEventListener('mouseover', addFocus)
     workSpaceBody.removeEventListener('mouseout', removeFocus)
-    workSpaceBody.removeEventListener('click', editTextNode)
+    workSpaceBody.removeEventListener('click', textNodeAction)
     workSpaceBody.removeEventListener('contextmenu', clear)
     workSpaceBody.querySelectorAll('.focus').forEach((item) => {item.classList.remove('focus')})
     workSpaceBody.querySelectorAll('[class=""]').forEach((item) => {item.removeAttribute('class')})
@@ -109,41 +118,32 @@ const _clearTextNode = (e, workSpaceBody, addFocus, removeFocus, editTextNode,
 }
 
 const _clearMoveTag = (e, workSpaceBody, addFocus, removeFocus, selectElement, 
-                       moveTagActions, clear, selectElementRef, emptyTag) => {
+                       action, clear, selectElementRef, emptyTag) => {
     e.preventDefault()
     console.log('clear')
-    workSpaceBody.removeEventListener('mouseover', addFocus)
-    workSpaceBody.removeEventListener('mouseout', removeFocus)
-    workSpaceBody.removeEventListener('dblclick', selectElement)
-    workSpaceBody.removeEventListener('click', moveTagActions)
-    workSpaceBody.removeEventListener('contextmenu', clear)
+    removeEventsListener(workSpaceBody, addFocus, removeFocus, selectElement, action, clear)
     workSpaceBody.querySelectorAll('.focus').forEach((item) => {item.classList.remove('focus')})
     workSpaceBody.querySelectorAll('[class=""]').forEach((item) => {item.removeAttribute('class')})
     selectElementRef.current = undefined
     emptyTag()
 }
 
-const saveEditTag = (selectElementRef, CONSTRUCTOR) => {
-    if(selectElementRef.current){
-        const newTag = CONSTRUCTOR.querySelector('.tag-editor').firstChild
-        selectElementRef.current.after(newTag)
-        selectElementRef.current.remove()
-    }
-}
-
 const _clearEditTag = (e, workSpaceBody, CONSTRUCTOR, addFocus, removeFocus, selectElement, 
-                       editTagActions, clear, selectElementRef, emptyTag, setEditTagName,
+                       action, clear, selectElementRef, emptyTag, setEditTagName,
                        setAttributesObj, setEditAttributeName, setEditAttributeValue, tagBodyRef,
                        oldTagNameRef, editElementRef) => {
+    const saveEditTag = (selectElementRef, CONSTRUCTOR) => {
+        if(selectElementRef.current){
+            const newTag = CONSTRUCTOR.querySelector('.tag-editor').firstChild
+            selectElementRef.current.after(newTag)
+            selectElementRef.current.remove()
+        }
+    }
     e.preventDefault()
     console.log('clear')
-    CONSTRUCTOR.querySelector('.change-tag .tools__block:nth-child(4)').classList.add('hide-block')
+    CONSTRUCTOR.querySelector('.edit-HTML .tools__block:nth-child(4)').classList.add('hide-block')
     saveEditTag(selectElementRef, CONSTRUCTOR)
-    workSpaceBody.removeEventListener('mouseover', addFocus)
-    workSpaceBody.removeEventListener('mouseout', removeFocus)
-    workSpaceBody.removeEventListener('dblclick', selectElement)
-    workSpaceBody.removeEventListener('click', editTagActions)
-    workSpaceBody.removeEventListener('contextmenu', clear)
+    removeEventsListener(workSpaceBody, addFocus, removeFocus, selectElement, action, clear)
     workSpaceBody.querySelectorAll('.focus').forEach((item) => {item.classList.remove('focus')})
     workSpaceBody.querySelectorAll('[class=""]').forEach((item) => {item.removeAttribute('class')})
     selectElementRef.current = undefined
@@ -158,45 +158,16 @@ const _clearEditTag = (e, workSpaceBody, CONSTRUCTOR, addFocus, removeFocus, sel
 }
 
 const _clearAddTag = (e, CONSTRUCTOR, workSpaceBody, selectElementRef, emptyTag, 
-                      addFocus, removeFocus, selectElement, joinTag, clear) => {
+                      addFocus, removeFocus, selectElement, action, clear) => {
     e.preventDefault()
     console.log('clear')
-    workSpaceBody.removeEventListener('mouseover', addFocus)
-    workSpaceBody.removeEventListener('mouseout', removeFocus)
-    workSpaceBody.removeEventListener('dblclick', selectElement)
-    workSpaceBody.removeEventListener('click', joinTag)
-    workSpaceBody.removeEventListener('contextmenu', clear)
+    removeEventsListener(workSpaceBody, addFocus, removeFocus, selectElement, action, clear)
     workSpaceBody.querySelectorAll('.focus').forEach((item) => {item.classList.remove('focus')})
     workSpaceBody.querySelectorAll('[class=""]').forEach((item) => {item.removeAttribute('class')})
     selectElementRef.current = undefined
     emptyTag()
-    // TODO make function
-    CONSTRUCTOR.querySelectorAll('.tools__block')
-                   .forEach((item) => {item.classList.remove('hide-block')})
-    // TODO make function
+    CONSTRUCTOR.querySelectorAll('.tools__block').forEach((item) => {item.classList.remove('hide-block')})
 }
 
-const _emptyTag = (newElementRef, showEmptyTag, EMPTY_TAGS) => {
-    const workSpaceBody = document.getElementById('WORKSPACE').contentDocument.body
-    const previewTag = newElementRef.current
-    if (showEmptyTag && workSpaceBody) {
-        workSpaceBody.querySelectorAll('*:empty')
-                     .forEach((item) => {if(!EMPTY_TAGS.includes(item.tagName.toLowerCase())){
-                                                item.classList.add('show-empty-tag')}})
-        workSpaceBody.querySelectorAll('.show-empty-tag')
-                     .forEach((item) => {if (item.childNodes.length){item.classList.remove('show-empty-tag')}})
-        if(previewTag && !previewTag.childNodes.length && !EMPTY_TAGS.includes(previewTag.tagName.toLowerCase())){
-            previewTag.classList.add('show-empty-tag')
-        }
-    }else if (workSpaceBody) {
-                workSpaceBody.querySelectorAll('.show-empty-tag')
-                             .forEach((item) => {item.classList.remove('show-empty-tag')});
-                workSpaceBody.querySelectorAll('[class=""]').forEach((item) => {item.removeAttribute('class')})
-                if (previewTag) {previewTag.classList.remove('show-empty-tag')}
-    }
-                
-}
-
-
-export {_focus, _selectElement, _joinTag, _clearAddTag, _editTextNode, _clearTextNode,
-        _moveTagActions, _emptyTag, _clearMoveTag, _editTagActions, _clearEditTag}
+export {_focus, _selectElement, _joinTagAction, _clearAddTag, _editTextNodeAction, _clearTextNode,
+        _moveTagAction, _clearMoveTag, _editTagAction, _clearEditTag}

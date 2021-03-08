@@ -69,4 +69,25 @@ const LabelRadioInputs = (props) => {
     return <>{newList}</>
 }
 
-export {LabelInput, Button, CheckIcon, LabelRadioInput, LabelCheckboxInput, LabelRadioInputs}
+const ShowTag = (props) => {
+    const attributes = Object.entries(props.attributesObj).map(([key, value]) => {
+       return `${key}="${value}"`
+    })
+    if (props.TAGS.includes(props.tagName)  && !props.EMPTY_TAGS.includes(props.tagName)) {
+        return <div className="show-tag">
+                    {`<${props.tagName} ${attributes.join(' ')}>${props.tagBody}</${props.tagName}>`}
+               </div>
+    }else if (props.EMPTY_TAGS.includes(props.tagName)) {
+        return <div className="show-tag">
+        {`<${props.tagName} ${attributes.join(' ')}/>`}
+   </div>
+    }else {
+        return <></>
+    }
+}
+
+ShowTag.defaultProps = {
+    attributesObj: {}
+}
+
+export {LabelInput, Button, CheckIcon, LabelRadioInput, LabelCheckboxInput, LabelRadioInputs, ShowTag}

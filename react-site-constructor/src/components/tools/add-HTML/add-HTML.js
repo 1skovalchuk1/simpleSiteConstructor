@@ -2,44 +2,15 @@ import React, {useState, useRef, useEffect} from 'react'
 import {ToolsBody} from '../__body/tools__body'
 import {ToolsBlock} from '../__block/tools__block'
 import {PreviewTag} from '../__preview-tag/tools__preview-tag'
-import {LabelInput, LabelCheckboxInput, 
-        Button, CheckIcon, LabelRadioInputs} from '../__block-items/tools__block-items';
+import {LabelInput, LabelCheckboxInput, ShowTag, Button, CheckIcon, LabelRadioInputs} from '../__block-items/tools__block-items';
 import {CONSTRUCTOR, TAGS, EMPTY_TAGS, PATH_LIST} from '../../../constants/constants'
-import {_focus, _selectElement, _joinTag, _clearAddTag, _emptyTag} from '../../../functions/functions'
+import {_focus, _selectElement, _joinTagAction, _clearAddTag} from '../../../common-functions/common-action-functions'
+import {_emptyTag, addEventsListener} from '../../../common-functions/common-functions'
+import {_addTag} from './add-HTML-action-functions'
 
-import './add-tag.css';
+import './add-HTML.css';
 
-const actions = (selectElementRef, radioInputRef, newElementRef, EmptyTag) => {
-    const workSpaceBody = document.getElementById('WORKSPACE').contentDocument.body
-    const newElement = newElementRef.current
-    
-    const addFocus = (e) => _focus(e, workSpaceBody, 'add')
-    const removeFocus = (e) => _focus(e, workSpaceBody, 'remove')
-    const selectElement = (e) => _selectElement(e, workSpaceBody, selectElementRef)
-    const joinTag = () => _joinTag(selectElementRef, radioInputRef, newElement)
-    const clear = (e) => _clearAddTag(e, CONSTRUCTOR, workSpaceBody, selectElementRef, EmptyTag, 
-                                      addFocus, removeFocus, selectElement, joinTag, clear)
-
-    if (newElement) {
-        if (workSpaceBody && workSpaceBody.children.length){
-            // TODO make function
-            CONSTRUCTOR.querySelectorAll('.tools__block')
-                    .forEach((item) => {item.classList.add('hide-block')})
-            // 
-            workSpaceBody.addEventListener('mouseover', addFocus)
-            workSpaceBody.addEventListener('mouseout', removeFocus)
-            workSpaceBody.addEventListener('dblclick', selectElement)
-            workSpaceBody.addEventListener('click', joinTag)
-            workSpaceBody.addEventListener('contextmenu', clear)
-        }else {
-            workSpaceBody.append(newElement.cloneNode(true))
-            // TODO make function
-            CONSTRUCTOR.querySelector('.tools__block:nth-child(1)').classList.remove('hide-block')
-        }
-    }
-}
-
-const AddTag = () => {
+const AddHTML = () => {
 
     const [tagName, setTagName] = useState('')
     const [tagBody, setTagBody] = useState('')
@@ -49,10 +20,13 @@ const AddTag = () => {
     const [showEmptyTag, setShowEmptyTag] = useState(false)
     
     const newElementRef = useRef()
-    const radioInputRef = useRef('append')
+    const pathRadioInputRef = useRef('append')
     const selectElementRef = useRef()
 
     const emptyTag = () => _emptyTag(newElementRef, showEmptyTag, EMPTY_TAGS)
+
+    const addTag = () => _addTag(CONSTRUCTOR, selectElementRef, pathRadioInputRef, newElementRef, emptyTag, 
+                                   addEventsListener, _focus, _selectElement, _joinTagAction, _clearAddTag)
 
     const addAttribute = () => {
         const newObj = {...attributesObj, [attributeName]: attributeValue}
@@ -79,30 +53,13 @@ const AddTag = () => {
         }
     }
 
-    const ShowTag = () => {
-        const attributes = Object.entries(attributesObj).map(([key, value]) => {
-           return `${key}="${value}"`
-        })
-        if (TAGS.includes(tagName)  && !EMPTY_TAGS.includes(tagName)) {
-            return <div className="show-tag">
-                        {`<${tagName} ${attributes.join(' ')}>${tagBody}</${tagName}>`}
-                   </div>
-        }else if (EMPTY_TAGS.includes(tagName)) {
-            return <div className="show-tag">
-            {`<${tagName} ${attributes.join(' ')}/>`}
-       </div>
-        }else {
-            return <></>
-        }
-    }
-
     const clearForm = () => {
         setTagName('')
         setTagBody('')
         setAttributesObj({})
         setAttributeName('')
         setAttributeValue('')
-        radioInputRef.current = 'append'
+        pathRadioInputRef.current = 'append'
     }
 
     const save = () => {
@@ -119,13 +76,12 @@ const AddTag = () => {
                      emptyTag()})
 
     return (
-        <div className="tools__add-tag add-tag">
+        <div className="tools__add-HTML add-HTML">
             <ToolsBody>
-                <ToolsBlock
-                            attributes={{onChange:(e) => {radioInputRef.current = e.target.value}}}>
+                <ToolsBlock attributes={{onChange:(e) => {pathRadioInputRef.current = e.target.value}}}>
                     <LabelRadioInputs listPath={PATH_LIST} 
-                                      radioInputRef={radioInputRef.current}
-                                      name="add-tag"/>
+                                      radioInputRef={pathRadioInputRef.current}
+                                      name="add-HTML"/>
                 </ToolsBlock>
                 <ToolsBlock>
                     <LabelInput attributes={{type:"text",
@@ -138,10 +94,7 @@ const AddTag = () => {
                                              onChange:(e) => {setTagBody(e.target.value)}}}>Tag Body
                     </LabelInput>
                         <div className="label-wrapper">
-                            <Button attributes={{onClick: () => actions(selectElementRef, 
-                                                                        radioInputRef, 
-                                                                        newElementRef,
-                                                                        emptyTag)}}>
+                            <Button attributes={{onClick: () => addTag()}}>
                                 Add tag
                             </Button>
                             <Button attributes={{onClick: () => clearForm()}}>
@@ -170,16 +123,23 @@ const AddTag = () => {
                                                       checked: showEmptyTag}}>
                         Show Empty Tags
                     </LabelCheckboxInput>
-                    <Button attributes={{onClick:() => {save()}}}>SAVE
-                    </Button>
+                    <div className="label-wrapper">
+                        <Button attributes={{onClick:() => {save()}}}>
+                            Save Project
+                        </Button>
+                    </div>
                 </ToolsBlock>
             </ToolsBody>
             <PreviewTag>
-                <ShowTag/>
+                <ShowTag atributesObj={attributesObj}
+                         tagName={tagName}
+                         tagBody={tagBody}
+                         TAGS={TAGS}
+                         EMPTY_TAGS={EMPTY_TAGS}/>
                 <TagCreator/>
             </PreviewTag>
         </div>
     )
 }
 
-export {AddTag}
+export {AddHTML}
