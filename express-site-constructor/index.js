@@ -17,7 +17,7 @@ const pathNewDirHTML = '/home/user/Desktop/js_projects/site-constructor/my-app/m
 const pathNewDirCSS = '/home/user/Desktop/js_projects/site-constructor/my-app/myApp.css'
 
 const workSpaceHTML = '/home/user/Desktop/js_projects/site-constructor/react-site-constructor/public/work-space.html'
-const workSpaceCSS = '/home/user/Desktop/js_projects/site-constructor/react-site-constructor/public/work-space.css'
+const workSpaceCSS = '/home/user/Desktop/js_projects/site-constructor/react-site-constructor/public/work-space-mutable.css'
 
 const writeDocument = (text, path) => {
   fs.writeFileSync(path, text);
@@ -34,21 +34,29 @@ const createHTMLdocument = (text, path) => {
 const transformNewGlobalObjtoString = (obj) => {
 
   const transformNewGlobalObjValuestoString = (objValue) => {
-    const ObjValueString = Object.entries(objValue).map(([key, value]) => {
-      return `\t\t${key}: "${value}",\n`
+    const ObjValueToString = Object.entries(objValue).map(([key, value]) => {
+      return `\t\t"${key}": "${value}",\n`
     })
-    return ObjValueString.join('')
+    return ObjValueToString.join('')
   }
 
-  const ObjString =  Object.entries(obj).map(([key, value]) => {
-    return `\t${key}: {
+  const ObjToString = Object.entries(obj).map(([key, value]) => {
+    return `\t"${key}": {
   ${transformNewGlobalObjValuestoString(value)}\t},\n`
 
   })
-  return ObjString.join('\n')
+  return ObjToString.join('\n')
 }
 
-const newGlobalObj = (postObj, oldGlobalObj) => {
+const writeNewGlobalObj = (newGlobalObj) => {
+    writeDocument('', pathGlobalObj)
+    appendDocument('const CSS_OBJECT = {\n\n', pathGlobalObj)
+    appendDocument(transformNewGlobalObjtoString(newGlobalObj), pathGlobalObj)
+    appendDocument('}\n\n', pathGlobalObj)
+    appendDocument('module.exports.CSS_OBJECT = CSS_OBJECT;', pathGlobalObj)
+}
+
+const addItemToGlobalObj = (postObj, oldGlobalObj) => {
   const globalObjvalues = Object.keys(oldGlobalObj)
   const postObjvalue = Object.keys(postObj)[0]
 
@@ -56,24 +64,56 @@ const newGlobalObj = (postObj, oldGlobalObj) => {
 
     Object.assign(oldGlobalObj[postObjvalue], postObj[postObjvalue])
     const newGlobalObj = oldGlobalObj
-
-    writeDocument('', pathGlobalObj)
-    appendDocument('const CSS_OBJECT = {\n\n', pathGlobalObj)
-    appendDocument(transformNewGlobalObjtoString(newGlobalObj), pathGlobalObj)
-    appendDocument('}\n\n', pathGlobalObj)
-    appendDocument('module.exports.CSS_OBJECT = CSS_OBJECT;', pathGlobalObj)
-
+    writeNewGlobalObj(newGlobalObj)
 
   }else {
 
-    const newGlobalObj = Object.assign(oldGlobalObj, postObj) 
-    writeDocument('', pathGlobalObj)
-    appendDocument('const CSS_OBJECT = {\n\n', pathGlobalObj)
-    appendDocument(transformNewGlobalObjtoString(newGlobalObj), pathGlobalObj)
-    appendDocument('}\n\n', pathGlobalObj)
-    appendDocument('module.exports.CSS_OBJECT = CSS_OBJECT;', pathGlobalObj)
+    const newGlobalObj = Object.assign(oldGlobalObj, postObj)
+    writeNewGlobalObj(newGlobalObj)
 
   }
+}
+
+const removeItemToGlobalObj = (postObj, oldGlobalObj) => {
+  const postObjValue = Object.values(postObj)[0]
+  const postObjKey = Object.keys(postObj)[0]
+  if (postObjValue !== '') {
+    delete oldGlobalObj[postObjKey][postObjValue];
+    console.log(oldGlobalObj, oldGlobalObj[postObjKey], postObjKey, postObjValue)
+    const newGlobalObj = oldGlobalObj
+    writeNewGlobalObj(newGlobalObj)
+  }else {
+    const postObjKey = Object.keys(postObj)[0]
+    delete oldGlobalObj.postObjKey;
+    const newGlobalObj = oldGlobalObj
+    writeNewGlobalObj(newGlobalObj)
+  }
+
+
+}
+
+const transformNewCSSToString = (obj) => {
+
+  const transformNewCSSvaluesToString = (objValue) => {
+    const CSSvalueToString = Object.entries(objValue).map(([key, value]) => {
+      return `\t${key}: ${value};\n`
+    })
+    return CSSvalueToString.join('')
+  }
+
+  const CSStoString = Object.entries(obj).map(([key, value]) => {
+    return `${key} {
+  ${transformNewCSSvaluesToString(value)}}\n`})
+  return CSStoString.join('\n')
+}
+
+const writeNewCSSfile = () => {
+
+    writeDocument('', pathNewDirCSS)
+    writeDocument('', workSpaceCSS)
+    appendDocument(transformNewCSSToString(CSS_OBJECT), pathNewDirCSS)
+    appendDocument(transformNewCSSToString(CSS_OBJECT), workSpaceCSS)
+
 }
 
 
@@ -89,10 +129,18 @@ app.post('/html', function (req, res) {
   console.log(req.body)
 });
 
-app.post('/css', function (req, res) {
+app.post('/addcss', function (req, res) {
   res.send();
-  newGlobalObj(req.body, CSS_OBJECT)
+  addItemToGlobalObj(req.body, CSS_OBJECT)
+  writeNewCSSfile()
 
+});
+
+app.post('/removecss', function (req, res) {
+  res.send();
+  console.log(req.body)
+  removeItemToGlobalObj(req.body, CSS_OBJECT)
+  // writeNewCSSfile()
 });
 
 app.listen(port, () => {

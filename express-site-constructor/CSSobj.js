@@ -1,22 +1,11 @@
 const CSS_OBJECT = {
 
-	h1: {
-  		color: "blue",
-		margin: "10px",
-		padding: "20px",
+	".test": {
+  		"margin-left": "20px",
 	},
 
-	h3: {
-  		color: "red",
-		margin: "10px",
-	},
-
-	h1ss: {
-  		colorsss: "red",
-	},
-
-	div: {
-  		padding: "20px",
+	"h1": {
+  		"color": "white",
 	},
 }
 

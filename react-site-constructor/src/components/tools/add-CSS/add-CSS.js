@@ -21,30 +21,44 @@ const AddCSS = () => {
             const workSpaceBody = document.getElementById('WORKSPACE').contentDocument.body
             if (querySelectorAll) {
                 const queryLength =  workSpaceBody.querySelectorAll(querySelectorAll).length
-                console.dir(workSpaceBody.querySelectorAll(querySelectorAll))
                 return queryLength
             }
-        }catch (e) {
+        }catch (error) {
           }
     }
 
-    const getCSSobj = () => {
-        if (querySelectorAll.length) {
-            const CSSobj = {
-                [querySelectorAll]: {
-                    [CSSproperty]: CSSvalue,
+    const sendCSSobjToAdd = () => {
+        if (querySelectorAll) {
+            const workSpaceBody = document.getElementById('WORKSPACE').contentDocument.body
+            const queryLength =  workSpaceBody.querySelectorAll(querySelectorAll).length
+            if (queryLength && CSSproperty && CSSvalue && CSS_PROPERTIES.includes(CSSproperty)) {
+                const CSSobj = {
+                    [querySelectorAll]: {
+                        [CSSproperty]: CSSvalue,
+                    }
                 }
+                fetch('http://localhost:3001/addcss', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json;charset=utf-8'
+                    },
+                    body: JSON.stringify(CSSobj)
+                });
             }
-        fetch('http://localhost:3001/css', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json;charset=utf-8'
-            },
-            body: JSON.stringify(CSSobj)
-        });
         }
     }
-    const removeCSS = () => {}
+    const sendCSSobjToRemove = () => {
+                
+                const CSSobj = {[querySelectorAll]: CSSproperty}
+
+                fetch('http://localhost:3001/removecss', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json;charset=utf-8'
+                    },
+                    body: JSON.stringify(CSSobj)
+                });
+    }
 
     return (
         <div className="tools__add-CSS add-CSS">
@@ -65,10 +79,10 @@ const AddCSS = () => {
                                              onChange:(e) => {setCSSvalue(e.target.value)}}}>CSS Value
                     </LabelInput>
                         <div className="label-wrapper">
-                            <Button attributes={{onClick: () => getCSSobj()}}>
+                            <Button attributes={{onClick: () => sendCSSobjToAdd()}}>
                                 Add CSS
                             </Button>
-                            <Button attributes={{onClick: () => removeCSS()}}>
+                            <Button attributes={{onClick: () => sendCSSobjToRemove()}}>
                                 Remove CSS
                             </Button>
                         </div>
