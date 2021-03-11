@@ -19,12 +19,12 @@ const _selectElement = (e, workSpaceBody, selectElementRef) => {
 
 // **************************************actions*****************************************
 
-const _joinTagAction = (selectElementRef, pathRadioInputRef, newElementRef) => {
+const _joinTagAction = (selectElementRef, pathRadioInputRef, newElementRef, emptyTag) => {
     console.log(selectElementRef.current)
     if(selectElementRef.current){
         console.log('join')
-        console.log(selectElementRef.current)
         selectElementRef.current[pathRadioInputRef.current](newElementRef.current.cloneNode(true))
+        emptyTag()
     }
 }
 
@@ -164,7 +164,6 @@ const _clearAddTag = (e, CONSTRUCTOR, workSpaceBody, selectElementRef, emptyTag,
     workSpaceBody.querySelectorAll('.focus').forEach((item) => {item.classList.remove('focus')})
     workSpaceBody.querySelectorAll('[class=""]').forEach((item) => {item.removeAttribute('class')})
     selectElementRef.current = undefined
-    emptyTag()
     CONSTRUCTOR.querySelectorAll('.tools__block').forEach((item) => {item.classList.remove('hide-block')})
 }
 

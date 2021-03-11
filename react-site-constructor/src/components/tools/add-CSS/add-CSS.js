@@ -29,8 +29,8 @@ const AddCSS = () => {
 
     const sendCSSobjToAdd = () => {
         if (querySelectorAll) {
-            const workSpaceBody = document.getElementById('WORKSPACE').contentDocument.body
-            const queryLength =  workSpaceBody.querySelectorAll(querySelectorAll).length
+            const workSpace = document.getElementById('WORKSPACE').contentDocument
+            const queryLength =  workSpace.querySelectorAll(querySelectorAll).length
             if (queryLength && CSSproperty && CSSvalue && CSS_PROPERTIES.includes(CSSproperty)) {
                 const CSSobj = {
                     [querySelectorAll]: {

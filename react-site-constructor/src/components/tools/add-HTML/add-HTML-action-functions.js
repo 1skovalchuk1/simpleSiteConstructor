@@ -5,7 +5,7 @@ const _addTag = (CONSTRUCTOR, selectElementRef, pathRadioInputRef, newElementRef
     const addFocus = (e) => _focus(e, workSpaceBody, 'add')
     const removeFocus = (e) => _focus(e, workSpaceBody, 'remove')
     const selectElement = (e) => _selectElement(e, workSpaceBody, selectElementRef)
-    const action = () => _joinTagAction(selectElementRef, pathRadioInputRef, newElementRef)
+    const action = () => _joinTagAction(selectElementRef, pathRadioInputRef, newElementRef, emptyTag)
     const clear = (e) => _clearAddTag(e, CONSTRUCTOR, workSpaceBody, selectElementRef, emptyTag, 
                                       addFocus, removeFocus, selectElement, action, clear)
     if (newElementRef.current) {

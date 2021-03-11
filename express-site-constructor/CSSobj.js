@@ -1,11 +1,7 @@
 const CSS_OBJECT = {
 
 	".test": {
-  		"margin-left": "20px",
-	},
-
-	"h1": {
-  		"color": "white",
+  		"margin-left": "200px",
 	},
 }
 

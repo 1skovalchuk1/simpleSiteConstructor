@@ -78,13 +78,16 @@ const removeItemToGlobalObj = (postObj, oldGlobalObj) => {
   const postObjValue = Object.values(postObj)[0]
   const postObjKey = Object.keys(postObj)[0]
   if (postObjValue !== '') {
-    delete oldGlobalObj[postObjKey][postObjValue];
-    console.log(oldGlobalObj, oldGlobalObj[postObjKey], postObjKey, postObjValue)
+    delete oldGlobalObj[postObjKey][postObjValue]
+    console.log('1')
+    console.log(postObjKey)
     const newGlobalObj = oldGlobalObj
     writeNewGlobalObj(newGlobalObj)
   }else {
     const postObjKey = Object.keys(postObj)[0]
-    delete oldGlobalObj.postObjKey;
+    delete oldGlobalObj[postObjKey]
+    console.log(postObjKey)
+    console.log('2')
     const newGlobalObj = oldGlobalObj
     writeNewGlobalObj(newGlobalObj)
   }
@@ -126,7 +129,6 @@ app.post('/html', function (req, res) {
   res.send();
   createHTMLdocument(req.body, pathNewDirHTML)
   createHTMLdocument(req.body, workSpaceHTML)
-  console.log(req.body)
 });
 
 app.post('/addcss', function (req, res) {
@@ -138,9 +140,8 @@ app.post('/addcss', function (req, res) {
 
 app.post('/removecss', function (req, res) {
   res.send();
-  console.log(req.body)
   removeItemToGlobalObj(req.body, CSS_OBJECT)
-  // writeNewCSSfile()
+  writeNewCSSfile()
 });
 
 app.listen(port, () => {

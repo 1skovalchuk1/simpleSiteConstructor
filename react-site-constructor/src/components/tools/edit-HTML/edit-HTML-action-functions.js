@@ -27,9 +27,9 @@ const _editTag = (CONSTRUCTOR, selectElementRef, oldTagNameRef, tagBodyRef, edit
     const action = () => _editTagAction(oldTagNameRef, selectElementRef, 
                                                   setAttributesObj, setEditTagName, tagBodyRef, CONSTRUCTOR)
     const clear = (e) => _clearEditTag(e, workSpaceBody, CONSTRUCTOR, addFocus, removeFocus, selectElement, 
-                                        action, clear, selectElementRef, emptyTag, setEditTagName,
-                                        setAttributesObj, setEditAttributeName, setEditAttributeValue, tagBodyRef,
-                                        oldTagNameRef, editElementRef)
+                                       action, clear, selectElementRef, emptyTag, setEditTagName,
+                                       setAttributesObj, setEditAttributeName, setEditAttributeValue, tagBodyRef,
+                                       oldTagNameRef, editElementRef)
 
     if(workSpaceBody) {
         addEventsListener(workSpaceBody, addFocus, removeFocus, selectElement, action, clear)

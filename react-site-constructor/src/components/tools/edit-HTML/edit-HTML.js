@@ -1,4 +1,4 @@
-import React, {useRef, useState, useEffect} from 'react'
+import React from 'react'
 import {ToolsBody} from '../__body/tools__body'
 import {ToolsBlock} from '../__block/tools__block'
 import {PreviewTag} from '../__preview-tag/tools__preview-tag'
@@ -6,58 +6,35 @@ import {LabelRadioInputs, Button, LabelCheckboxInput, LabelInput, ShowTag} from 
 import {PATH_LIST, ACTIONS_LIST, EMPTY_TAGS, CONSTRUCTOR, TAGS} from '../../../constants/constants'
 import {_focus, _selectElement, _moveTagAction, _clearTextNode,
         _clearMoveTag, _editTagAction, _clearEditTag, _editTextNodeAction} from '../../../common-functions/common-action-functions'
-import {_emptyTag, addEventsListener} from '../../../common-functions/common-functions'
+import {addEventsListener} from '../../../common-functions/common-functions'
 import {_moveTag, _editTag, _editTextNode} from './edit-HTML-action-functions'
 
 import './edit-HTML.css';
 
-const EditHTML =  () => {
+const EditHTML =  (props) => {
 
-    const [withChildren, setWithChildren] = useState(true)
-    const [showEmptyTag, setShowEmptyTag] = useState(false)
-    const [editTagName, setEditTagName] = useState('')
-    const [attributesObj, setAttributesObj] = useState({})
-    const [editAttributeName, setEditAttributeName] = useState('')
-    const [editAttributeValue, setEditAttributeValue] = useState('')
-
-    const pathRadioInputRef = useRef('append')
-    const actionRadioInputRef = useRef('copy')
-    const selectElementRef = useRef()
-    const editElementRef = useRef()
-    const oldTagNameRef = useRef('')
-    const tagBodyRef = useRef('')
-
-    const moveTag = () => _moveTag(selectElementRef, actionRadioInputRef, pathRadioInputRef, withChildren, emptyTag, 
+    const moveTag = () => _moveTag(props.selectElementRef, props.actionRadioInputRef, props.pathRadioInputRef,
+                                   props.withChildren, props.emptyTag, 
                                    addEventsListener, _focus, _selectElement, _moveTagAction, _clearMoveTag)
                 
-    const editTag = () => _editTag(CONSTRUCTOR, selectElementRef, oldTagNameRef, tagBodyRef, editElementRef, 
-                                   setAttributesObj, setEditTagName, setEditAttributeName, setEditAttributeValue, 
-                                   emptyTag, addEventsListener, _focus, _selectElement, _editTagAction, _clearEditTag)
+    const editTag = () => _editTag(CONSTRUCTOR, props.selectElementRef, props.oldTagNameRef, props.tagBodyRef,
+                                   props.editElementRef, props.setEditAttributesObj, props.setEditTagName,
+                                   props.setEditAttributeName, props.setEditAttributeValue, props.emptyTag, 
+                                   addEventsListener, _focus, _selectElement, _editTagAction, _clearEditTag)
     
-    const editTextNode = () => _editTextNode(selectElementRef, emptyTag, _focus, _editTextNodeAction, _clearTextNode)
-
-    const emptyTag = () => _emptyTag(editElementRef, showEmptyTag, EMPTY_TAGS)
-
-    const addAttribute = () => {
-        const newObj = {...attributesObj, [editAttributeName]: editAttributeValue}
-        setAttributesObj(newObj)
-    }
-
-    const removeAttribute = () => {
-        const newObj = {...attributesObj}
-        delete newObj[editAttributeName]
-        setAttributesObj(newObj)
-    }
+    const editTextNode = () => _editTextNode(props.selectElementRef, props.emptyTag, _focus,
+                                             _editTextNodeAction, _clearTextNode)
 
     const getTag = () => {
-        const attributes = Object.entries(attributesObj).map(([key, value]) => {
+        const attributes = Object.entries(props.editAttributesObj).map(([key, value]) => {
            return `${key}="${value}"`
         })
-        if (TAGS.includes(editTagName)  && !EMPTY_TAGS.includes(editTagName)) {
-            return {__html: `<${editTagName} ${attributes.join(' ')}>${tagBodyRef.current}</${editTagName}>`};
+        if (TAGS.includes(props.editTagName)  && !EMPTY_TAGS.includes(props.editTagName)) {
+            return {
+                __html: `<${props.editTagName} ${attributes.join(' ')}>${props.tagBodyRef.current}</${props.editTagName}>`};
                    
-        }else if (EMPTY_TAGS.includes(editTagName)) {
-            return {__html: `<${editTagName} ${attributes.join(' ')}/>`};
+        }else if (EMPTY_TAGS.includes(props.editTagName)) {
+            return {__html: `<${props.editTagName} ${attributes.join(' ')}/>`};
         }else {
             return {__html: ''};
         }
@@ -68,31 +45,28 @@ const EditHTML =  () => {
     }
 
     const hideBlock = (querySelector) => {
-        if (actionRadioInputRef.current === 'remove') {
+        if (props.actionRadioInputRef.current === 'remove') {
             CONSTRUCTOR.querySelector(querySelector).classList.add('hide-block')
         }else {CONSTRUCTOR.querySelector(querySelector).classList.remove('hide-block')}
     }
 
-    useEffect(() => {editElementRef.current = CONSTRUCTOR.querySelector('.tools__preview-tag').lastChild;
-                     emptyTag()})
-
     return (
         <div className="tools__edit-HTML edit-HTML">
             <ToolsBody>
-                <ToolsBlock attributes={{onChange:(e) => {pathRadioInputRef.current = e.target.value}}}>
+                <ToolsBlock attributes={{onChange:(e) => {props.pathRadioInputRef.current = e.target.value}}}>
                     <LabelRadioInputs listPath={PATH_LIST} 
-                                      radioInputRef={pathRadioInputRef.current}
+                                      radioInputRef={props.pathRadioInputRef.current}
                                       name="change-tag-path"/>
                 </ToolsBlock>
                 <ToolsBlock>
-                    <div onChange = {(e)=>{actionRadioInputRef.current = e.target.value;
+                    <div onChange = {(e)=>{props.actionRadioInputRef.current = e.target.value;
                                            hideBlock('.edit-HTML .tools__block')}}>   
                     <LabelRadioInputs listPath={ACTIONS_LIST}
-                                      radioInputRef={actionRadioInputRef.current}
+                                      radioInputRef={props.actionRadioInputRef.current}
                                       name="edit-HTML-action"/>
                     </div>
-                    <LabelCheckboxInput  attributes={{onChange:() => {setWithChildren(!withChildren)},
-                                         checked: withChildren}}
+                    <LabelCheckboxInput  attributes={{onChange:() => {props.etWithChildren(!props.withChildren)},
+                                         checked: props.withChildren}}
                                          classLabel="checkbox-with-children">
                         With Children
                     </LabelCheckboxInput>
@@ -101,48 +75,53 @@ const EditHTML =  () => {
                     <Button attributes={{onClick:() => {moveTag()}}}>
                         Move Tag
                     </Button>
-                    <Button attributes={{onClick:() => {editTag(selectElementRef, oldTagNameRef, 
-                                                                setAttributesObj, setEditTagName, 
-                                                                tagBodyRef, emptyTag,
-                                                                setEditAttributeName, setEditAttributeValue, 
-                                                                editElementRef);
+                    <Button attributes={{onClick:() => {editTag(props.selectElementRef, props.oldTagNameRef, 
+                                                                props.setEditAttributesObj, props.setEditTagName, 
+                                                                props.tagBodyRef, props.emptyTag,
+                                                                props.setEditAttributeName, props.setEditAttributeValue, 
+                                                                props.editElementRef);
                                                         CONSTRUCTOR.querySelector('.edit-HTML .tools__block:nth-child(4)').classList.remove('hide-block')}}}>
                         Edit Tag
                     </Button>
-                    <LabelCheckboxInput  attributes={{onChange:() => {setShowEmptyTag(!showEmptyTag)},
-                                                      checked: showEmptyTag}}>
+                    <LabelCheckboxInput  attributes={{onChange:() => {props.setShowEmptyTag(!props.showEmptyTag)},
+                                                      checked: props.showEmptyTag}}>
                         Show Empty Tags
                     </LabelCheckboxInput>
                 </ToolsBlock>
                 <ToolsBlock classBlock="hide-block">
                     <LabelInput attributes={{type:"text",
-                                             value: editTagName,
-                                             onChange:(e) => {setEditTagName(e.target.value)}}}>Edit Tag Name
+                                             value: props.editTagName,
+                                             onChange:(e) => {props.setEditTagName(e.target.value)}}}>
+                        Edit Tag Name
                     </LabelInput>
                     <LabelInput attributes={{type:"text",
-                                             value: editAttributeName,
-                                             onChange:(e) => {setEditAttributeName(e.target.value)}}}>Edit Attribute Name
+                                             value: props.editAttributeName,
+                                             onChange:(e) => {props.setEditAttributeName(e.target.value)}}}>
+                        Edit Attribute Name
                     </LabelInput>
                     <LabelInput attributes={{type:"text",
-                                             value: editAttributeValue,
-                                             onChange:(e) => {setEditAttributeValue(e.target.value)}}}>Edit Attribute Value
+                                             value: props.editAttributeValue,
+                                             onChange:(e) => {props.setEditAttributeValue(e.target.value)}}}>
+                        Edit Attribute Value
                     </LabelInput>
                         <div className="label-wrapper">
-                            <Button attributes={{onClick:() => {addAttribute()}}}>Add Attribute
+                            <Button attributes={{onClick:() => {props.addAttribute()}}}>
+                                Add Attribute
                             </Button>
-                            <Button attributes={{onClick:() => {removeAttribute()}}}>Remove Attribute
+                            <Button attributes={{onClick:() => {props.removeAttribute()}}}>
+                                Remove Attribute
                             </Button>
                         </div>
                 </ToolsBlock>
                 <ToolsBlock>
-                    <Button attributes={{onClick:() => {editTextNode(selectElementRef, emptyTag)}}}>
+                    <Button attributes={{onClick:() => {editTextNode(props.selectElementRef, props.emptyTag)}}}>
                         Edit Text Node
                     </Button>
                 </ToolsBlock>
             </ToolsBody>
             <PreviewTag>
-                <ShowTag atributesObj={attributesObj}
-                         tagName={editTagName}
+                <ShowTag attributesObj={props.editAttributesObj}
+                         tagName={props.editTagName}
                          tagBody={'...'}
                          TAGS={TAGS}
                          EMPTY_TAGS={EMPTY_TAGS}/>

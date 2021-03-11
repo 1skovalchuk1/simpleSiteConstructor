@@ -1,52 +1,28 @@
-import React, {useState, useRef, useEffect} from 'react'
+import React from 'react'
 import {ToolsBody} from '../__body/tools__body'
 import {ToolsBlock} from '../__block/tools__block'
 import {PreviewTag} from '../__preview-tag/tools__preview-tag'
 import {LabelInput, LabelCheckboxInput, ShowTag, Button, CheckIcon, LabelRadioInputs} from '../__block-items/tools__block-items';
 import {CONSTRUCTOR, TAGS, EMPTY_TAGS, PATH_LIST} from '../../../constants/constants'
 import {_focus, _selectElement, _joinTagAction, _clearAddTag} from '../../../common-functions/common-action-functions'
-import {_emptyTag, addEventsListener} from '../../../common-functions/common-functions'
+import {addEventsListener} from '../../../common-functions/common-functions'
 import {_addTag} from './add-HTML-action-functions'
 
 import './add-HTML.css';
 
-const AddHTML = () => {
+const AddHTML = (props) => {
 
-    const [tagName, setTagName] = useState('')
-    const [tagBody, setTagBody] = useState('')
-    const [attributesObj, setAttributesObj] = useState({})
-    const [attributeName, setAttributeName] = useState('')
-    const [attributeValue, setAttributeValue] = useState('')
-    const [showEmptyTag, setShowEmptyTag] = useState(false)
-    
-    const newElementRef = useRef()
-    const pathRadioInputRef = useRef('append')
-    const selectElementRef = useRef()
-
-    const emptyTag = () => _emptyTag(newElementRef, showEmptyTag, EMPTY_TAGS)
-
-    const addTag = () => _addTag(CONSTRUCTOR, selectElementRef, pathRadioInputRef, newElementRef, emptyTag, 
-                                   addEventsListener, _focus, _selectElement, _joinTagAction, _clearAddTag)
-
-    const addAttribute = () => {
-        const newObj = {...attributesObj, [attributeName]: attributeValue}
-        setAttributesObj(newObj)
-    }
-
-    const removeAttribute = () => {
-        const newObj = {...attributesObj}
-        delete newObj[attributeName]
-        setAttributesObj(newObj)
-    }
+    const addTag = () => _addTag(CONSTRUCTOR, props.selectElementRef, props.pathRadioInputRef, props.addElementRef, 
+                                 props.emptyTag, addEventsListener, _focus, _selectElement, _joinTagAction, _clearAddTag)
 
     const TagCreator = () => {
         if (CONSTRUCTOR) {
-            if (TAGS.includes(tagName) && !EMPTY_TAGS.includes(tagName)) {
+            if (TAGS.includes(props.addTagName) && !EMPTY_TAGS.includes(props.addTagName)) {
                 CONSTRUCTOR.querySelector('.label-wrapper:nth-child(2)').classList.remove('hide-block')
-                return React.createElement(tagName, attributesObj,`${tagBody}`)
-            }else if (EMPTY_TAGS.includes(tagName)) {
+                return React.createElement(props.addTagName, props.addAttributesObj,`${props.addTagBody}`)
+            }else if (EMPTY_TAGS.includes(props.addTagName)) {
                 CONSTRUCTOR.querySelector('.label-wrapper:nth-child(2)').classList.add('hide-block')
-                return React.createElement(tagName, attributesObj)
+                return React.createElement(props.addTagName, props.addAttributesObj)
             }else {
                 return <></>
             }
@@ -54,12 +30,12 @@ const AddHTML = () => {
     }
 
     const clearForm = () => {
-        setTagName('')
-        setTagBody('')
-        setAttributesObj({})
-        setAttributeName('')
-        setAttributeValue('')
-        pathRadioInputRef.current = 'append'
+        props.setAddTagName('')
+        props.setAddTagBody('')
+        props.setAddAttributesObj({})
+        props.setAddAttributeName('')
+        props.setAddAttributeValue('')
+        props.pathRadioInputRef.current = 'append'
     }
 
     const save = () => {
@@ -72,26 +48,25 @@ const AddHTML = () => {
         });
     }
 
-    useEffect(() => {newElementRef.current = CONSTRUCTOR.querySelector('.tools__preview-tag').lastChild;
-                     emptyTag()})
-
     return (
         <div className="tools__add-HTML add-HTML">
             <ToolsBody>
-                <ToolsBlock attributes={{onChange:(e) => {pathRadioInputRef.current = e.target.value}}}>
+                <ToolsBlock attributes={{onChange:(e) => {props.pathRadioInputRef.current = e.target.value}}}>
                     <LabelRadioInputs listPath={PATH_LIST} 
-                                      radioInputRef={pathRadioInputRef.current}
+                                      radioInputRef={props.pathRadioInputRef.current}
                                       name="add-HTML"/>
                 </ToolsBlock>
                 <ToolsBlock>
                     <LabelInput attributes={{type:"text",
-                                             value: tagName,
-                                             onChange:(e) => {setTagName(e.target.value)}}}>Tag Name
-                        <CheckIcon value={TAGS.includes(tagName)}/>
+                                             value: props.addTagName,
+                                             onChange:(e) => {props.setAddTagName(e.target.value)}}}>
+                        Tag Name
+                        <CheckIcon value={TAGS.includes(props.addTagName)}/>
                     </LabelInput>
                     <LabelInput attributes={{type:"text",
-                                             value: tagBody,
-                                             onChange:(e) => {setTagBody(e.target.value)}}}>Tag Body
+                                             value: props.addTagBody,
+                                             onChange:(e) => {props.setAddTagBody(e.target.value)}}}>
+                        Tag Body
                     </LabelInput>
                         <div className="label-wrapper">
                             <Button attributes={{onClick: () => addTag()}}>
@@ -104,23 +79,27 @@ const AddHTML = () => {
                 </ToolsBlock>
                 <ToolsBlock>
                     <LabelInput attributes={{type:"text",
-                                             value: attributeName,
-                                             onChange:(e) => {setAttributeName(e.target.value)}}}>Attribute Name
+                                             value: props.addAttributeName,
+                                             onChange:(e) => {props.setAddAttributeName(e.target.value)}}}>
+                        Attribute Name
                     </LabelInput>
                     <LabelInput attributes={{type:"text",
-                                             value: attributeValue,
-                                             onChange:(e) => {setAttributeValue(e.target.value)}}}>Attribute Value
+                                             value: props.addAttributeValue,
+                                             onChange:(e) => {props.setAddAttributeValue(e.target.value)}}}>
+                        Attribute Value
                     </LabelInput>
                         <div className="label-wrapper">
-                            <Button attributes={{onClick:() => {addAttribute()}}}>Add Attribute
+                            <Button attributes={{onClick:() => {props.addAttribute()}}}>
+                                Add Attribute
                             </Button>
-                            <Button attributes={{onClick:() => {removeAttribute()}}}>Remove Attribute
+                            <Button attributes={{onClick:() => {props.removeAttribute()}}}>
+                                Remove Attribute
                             </Button>
                         </div>
                 </ToolsBlock>
                 <ToolsBlock classBlock="tools__block--last">
-                    <LabelCheckboxInput  attributes={{onChange:() => {setShowEmptyTag(!showEmptyTag)},
-                                                      checked: showEmptyTag}}>
+                    <LabelCheckboxInput  attributes={{onChange:() => {props.setShowEmptyTag(!props.showEmptyTag)},
+                                                      checked: props.showEmptyTag}}>
                         Show Empty Tags
                     </LabelCheckboxInput>
                     <div className="label-wrapper">
@@ -131,9 +110,9 @@ const AddHTML = () => {
                 </ToolsBlock>
             </ToolsBody>
             <PreviewTag>
-                <ShowTag atributesObj={attributesObj}
-                         tagName={tagName}
-                         tagBody={tagBody}
+                <ShowTag attributesObj={props.addAttributesObj}
+                         tagName={props.addTagName}
+                         tagBody={props.addTagBody}
                          TAGS={TAGS}
                          EMPTY_TAGS={EMPTY_TAGS}/>
                 <TagCreator/>
