@@ -51,7 +51,7 @@ const Tools = (props) => {
                      addTagBody={props.tagBody}
 
                      addElementRef={props.showElementRef}
-                     pathRadioInputRef={props.pathRadioInputRef}
+                     pathRadioInputRef={props.addHTMLpathRadioInputRef}
                      selectElementRef={props.selectElementRef}/>
 
             <EditHTML emptyTag={emptyTag}
@@ -80,7 +80,7 @@ const Tools = (props) => {
                       oldTagNameRef={props.oldTagNameRef}
                       tagBodyRef={props.tagBodyRef}
                       editElementRef={props.showElementRef}
-                      pathRadioInputRef={props.pathRadioInputRef}
+                      pathRadioInputRef={props.editHTMLpathRadioInputRef}
                       selectElementRef={props.selectElementRef}/>
             <AddCSS/>
         </div>

@@ -5,6 +5,7 @@ import {removeEventsListener} from './common-functions';
 const _focus = (e, workSpaceBody, action) => {
     if (e.target !== workSpaceBody){
         e.target.classList[action]('focus')
+        console.log('focus')
     }
 }
 
@@ -19,19 +20,22 @@ const _selectElement = (e, workSpaceBody, selectElementRef) => {
 
 // **************************************actions*****************************************
 
-const _joinTagAction = (selectElementRef, pathRadioInputRef, newElementRef, emptyTag) => {
-    console.log(selectElementRef.current)
+const _joinTagAction = (workSpaceBody, selectElementRef, pathRadioInputRef, newElementRef, 
+                        emptyTag, addFocus, removeFocus) => {
     if(selectElementRef.current){
-        console.log('join')
+        console.log('action')
         selectElementRef.current[pathRadioInputRef.current](newElementRef.current.cloneNode(true))
+        workSpaceBody.removeEventListener('mouseover', addFocus)
+        workSpaceBody.removeEventListener('mouseout', removeFocus)
         emptyTag()
     }
 }
 
-const _moveTagAction = (e, actionRadioInputRef, withChildren, selectElementRef, 
-                           pathRadioInputRef, emptyTag) => {
-    if(selectElementRef.current){
+const _moveTagAction = (e, workSpaceBody, actionRadioInputRef, withChildren, selectElementRef, 
+                        pathRadioInputRef, emptyTag, clear) => {
+    if(selectElementRef.current && e.target !== workSpaceBody){
         const pathElem = e.target
+        console.log('action')
         switch(actionRadioInputRef.current){
             case 'copy':
                 if (withChildren){
@@ -46,18 +50,19 @@ const _moveTagAction = (e, actionRadioInputRef, withChildren, selectElementRef,
             case 'remove':
                 if (withChildren){
                     selectElementRef.current.remove()
+                    clear(e)
                     emptyTag()
                 }else {
                     const removeElem = selectElementRef.current
                     Object.values(removeElem.children).forEach((item) => {removeElem.after(item)})
                     removeElem.remove()
+                    clear(e)
                     emptyTag()
                 }
                 break;
             case 'cut':
                 if (withChildren){
                     const cutElem = selectElementRef.current.cloneNode(true)
-                    console.log(cutElem, pathElem)
                     pathElem[pathRadioInputRef.current](cutElem)
                     selectElementRef.current.remove()
                     emptyTag()
@@ -76,8 +81,13 @@ const _moveTagAction = (e, actionRadioInputRef, withChildren, selectElementRef,
     }
 }
 
-const _editTagAction = (oldTagNameRef, selectElementRef, setAttributesObj, setEditTagName, tagBodyRef) => {
+const _editTagAction = (workSpaceBody, oldTagNameRef, selectElementRef, setAttributesObj, setEditTagName, tagBodyRef,
+                        addFocus, removeFocus) => {
     if(selectElementRef.current){
+        console.log('action')
+        selectElementRef.current.classList.remove('focus')
+        selectElementRef.current.classList.remove('show-empty-tag')
+        if (selectElementRef.current.getAttribute('class') === ''){selectElementRef.current.removeAttribute('class')}
         oldTagNameRef.current = selectElementRef.current.tagName.toLowerCase()
         const newAttrList = Object.values(selectElementRef.current.attributes).map((value) => {
             return [value.nodeName, value.nodeValue]
@@ -86,15 +96,20 @@ const _editTagAction = (oldTagNameRef, selectElementRef, setAttributesObj, setEd
         tagBodyRef.current = selectElementRef.current.innerHTML
         setAttributesObj(newAttrObj)
         setEditTagName(oldTagNameRef.current)
-
+        selectElementRef.current.classList.add('focus')
+        workSpaceBody.removeEventListener('mouseover', addFocus)
+        workSpaceBody.removeEventListener('mouseout', removeFocus)
     }
 }
 
-const _editTextNodeAction = (e, selectElementRef, workSpaceBody) => {
+const _editTextNodeAction = (e, selectElementRef, workSpaceBody, addFocus, removeFocus) => {
     if (e.target !== workSpaceBody && !selectElementRef.current){
         console.log('select')
         selectElementRef.current = e.target
+        workSpaceBody.removeEventListener('mouseover', addFocus)
+        workSpaceBody.removeEventListener('mouseout', removeFocus)
     }
+    console.log('action')
     selectElementRef.current.setAttribute('contenteditable', 'true')
 }
 
@@ -104,8 +119,7 @@ const _clearTextNode = (e, workSpaceBody, addFocus, removeFocus, textNodeAction,
                         clear, selectElementRef, emptyTag) => {
     e.preventDefault()
     console.log('clear')
-    console.log(selectElementRef.current)
-    selectElementRef.current.removeAttribute('contenteditable')
+    if (selectElementRef.current) {selectElementRef.current.removeAttribute('contenteditable')}
     workSpaceBody.removeEventListener('mouseover', addFocus)
     workSpaceBody.removeEventListener('mouseout', removeFocus)
     workSpaceBody.removeEventListener('click', textNodeAction)
@@ -156,7 +170,7 @@ const _clearEditTag = (e, workSpaceBody, CONSTRUCTOR, addFocus, removeFocus, sel
     emptyTag()
 }
 
-const _clearAddTag = (e, CONSTRUCTOR, workSpaceBody, selectElementRef, emptyTag, 
+const _clearAddTag = (e, CONSTRUCTOR, workSpaceBody, selectElementRef,
                       addFocus, removeFocus, selectElement, action, clear) => {
     e.preventDefault()
     console.log('clear')

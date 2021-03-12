@@ -59,12 +59,12 @@ const LabelRadioInputs = (props) => {
         if (item === props.radioInputRef){
             return <LabelRadioInput key={item} 
                                     attributes={{name: props.name, 
-                                                 value:item, 
-                                                 defaultChecked:true}}>{item}</LabelRadioInput>
+                                                 value: item, 
+                                                 defaultChecked: true}}>{item}</LabelRadioInput>
         }
         return <LabelRadioInput key={item} 
                                 attributes={{name: props.name, 
-                                             value:item}}>{item}</LabelRadioInput>
+                                             value: item}}>{item}</LabelRadioInput>
     })
     return <>{newList}</>
 }

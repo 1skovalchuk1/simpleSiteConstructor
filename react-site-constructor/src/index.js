@@ -18,16 +18,17 @@ const App = () => {
   const oldTagNameRef = useRef('')
   const tagBodyRef = useRef('')
   const showElementRef = useRef()
-  const pathRadioInputRef = useRef('append')
+  const addHTMLpathRadioInputRef = useRef('append')
+  const editHTMLpathRadioInputRef = useRef('append')
   const selectElementRef = useRef()
 
   return (
         <>
           <Tab setTagName={setTagName}
+               setTagBody={setTagBody}
                setAttributesObj={setAttributesObj}
                setAttributeName={setAttributeName}
-               setAttributeValue={setAttributeValue}
-               pathRadioInputRef={pathRadioInputRef}/>
+               setAttributeValue={setAttributeValue}/>
 
           <Tools showEmptyTag={showEmptyTag}
                  setShowEmptyTag={setShowEmptyTag}
@@ -54,7 +55,8 @@ const App = () => {
                  oldTagNameRef={oldTagNameRef}
                  tagBodyRef={tagBodyRef}
                  showElementRef={showElementRef}
-                 pathRadioInputRef={pathRadioInputRef}
+                 addHTMLpathRadioInputRef={addHTMLpathRadioInputRef}
+                 editHTMLpathRadioInputRef={editHTMLpathRadioInputRef}
                  selectElementRef={selectElementRef}/>
       </>
   )

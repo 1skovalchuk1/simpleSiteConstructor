@@ -20,25 +20,24 @@ const Tab = (props) => {
             blockActiveElem.classList.add('active')
             tabActiveElem.classList.add('tab__button--active')
         }
-
     }
 
-    const clearForm = () => {
+    const clearForm = (props) => {
         props.setTagName('')
+        props.setTagBody('')
         props.setAttributesObj({})
         props.setAttributeName('')
         props.setAttributeValue('')
-        props.pathRadioInputRef.current = 'append'
     }
 
     return (
         <div className="tab">
             <TabButton value="Add HTML" 
                        attributes={{'data-bind': "add-HTML",
-                                    onClick: (e) => {ShowBlock(e); clearForm()}}}/>
+                                    onClick: (e) => {ShowBlock(e); clearForm(props)}}}/>
             <TabButton value="Edit HTML" 
                        attributes={{'data-bind': "edit-HTML",
-                                    onClick: (e) => {ShowBlock(e); clearForm()}}}/>
+                                    onClick: (e) => {ShowBlock(e); clearForm(props)}}}/>
             <TabButton value="Add CSS" 
                         attributes={{'data-bind': "add-CSS",
                                     onClick: (e) => {ShowBlock(e)}}}/>
